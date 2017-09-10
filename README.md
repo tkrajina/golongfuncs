@@ -1,3 +1,5 @@
+[![Build Status](https://api.travis-ci.org/tkrajina/golongfuncs)](https://travis-ci.org/tkrajina/golongfuncs)
+
 # GoLongFuncs
 
 `golongfuncs` is a tool for searching "long" functions by various measures (and combinations of measures).
