@@ -1,0 +1,9 @@
+# Ctags
+tags
+# Vim:
+*.sw*
+# IntelliJ
+.idea/
+*.iml
+# Random
+.DS_Store

@@ -1,0 +1,88 @@
+package main
+
+import (
+	"flag"
+	"fmt"
+	"regexp"
+	"strings"
+
+	"github.com/tkrajina/golongfuncs/internal"
+)
+
+func main() {
+	ty := make([]string, len(internal.AllTypes))
+	for n := range internal.AllTypes {
+		ty[n] = string(internal.AllTypes[n])
+	}
+
+	var ignoreRegexp, types string
+
+	var params internal.CmdParams
+	flag.StringVar(&types, "type", string(internal.Lines), "Type of stats, valid types are: "+strings.Join(ty, ", "))
+	flag.Float64Var(&params.Treshold, "treshold", 0, "Min value, functions with value less than this will be ignored")
+	flag.IntVar(&params.MinLines, "min-lines", 10, "Functions shorter than this will be ignored")
+	flag.IntVar(&params.Top, "top", 25, "Show only top n functions")
+	flag.BoolVar(&params.IncludeTests, "include-tests", false, "Include tests")
+	flag.BoolVar(&params.IncludeVendor, "include-vendor", false, "Include vendored files")
+	flag.StringVar(&ignoreRegexp, "ignore", "", "Regexp for files/directories to ignore")
+	flag.Parse()
+
+	paths := flag.Args()
+	if len(paths) == 0 {
+		paths = append(paths, ".")
+	}
+
+	prepareParams(&params, types, ignoreRegexp)
+	stats := internal.Do(params, paths)
+	printStats(params, stats)
+}
+
+func prepareParams(params *internal.CmdParams, types, ignoreRegexp string) {
+	var err error
+	params.Types, err = internal.ParseTypes(types)
+	if err != nil {
+		internal.PrintUsage("Invalid type(s) '%s'", types)
+	}
+	if len(ignoreRegexp) > 0 {
+		r, err := regexp.Compile(ignoreRegexp)
+		if err != nil {
+			internal.PrintUsage("Invalid ignore regexp '%s'", ignoreRegexp)
+		}
+		params.Ignore = r
+	}
+}
+
+func printStats(params internal.CmdParams, stats []internal.FunctionStats) {
+	count := 0
+	for _, st := range stats {
+		val, err := st.Get(params.Types[0])
+		if err != nil {
+			internal.PrintUsage("Invalid type %s\n", params.Types[0])
+		}
+		lines, _ := st.Get(internal.Lines)
+		if val >= params.Treshold && int(lines) >= params.MinLines {
+			loc := st.Location
+			if len(loc) >= 38 {
+				loc = "..." + loc[len(loc)-35:]
+			}
+			fmt.Printf("%40s %-40s", st.Name, loc)
+			printSingleStat(params.Types[0], val)
+			count += 1
+			if len(params.Types) > 1 {
+				for i := 1; i < len(params.Types); i++ {
+					val, _ := st.Get(params.Types[i])
+					printSingleStat(params.Types[i], val)
+				}
+			}
+			fmt.Println()
+		}
+		if count >= params.Top {
+			return
+		}
+	}
+}
+
+func printSingleStat(ty internal.FuncMeasurement, val float64) {
+	format := fmt.Sprintf("%%%ds", len(string(ty))+8)
+	fmt.Printf(format, fmt.Sprintf("%s=%.1f", ty, val))
+}
