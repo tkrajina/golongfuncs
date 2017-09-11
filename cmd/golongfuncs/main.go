@@ -65,7 +65,7 @@ func printStats(params internal.CmdParams, stats []internal.FunctionStats) {
 			if len(loc) >= 38 {
 				loc = "..." + loc[len(loc)-35:]
 			}
-			fmt.Printf("%40s %-40s", st.Name, loc)
+			fmt.Printf("%60s %-40s", st.FuncWithRecv(), loc)
 			printSingleStat(params.Types[0], val)
 			count += 1
 			if len(params.Types) > 1 {

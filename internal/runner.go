@@ -1,6 +1,7 @@
 package internal
 
 import (
+	"fmt"
 	"go/ast"
 	"go/parser"
 	"go/token"
@@ -138,9 +139,16 @@ func NewVisitor(params CmdParams, file *ast.File, fset *token.FileSet, stats []F
 
 func (v *Visitor) Visit(node ast.Node) ast.Visitor {
 	if node != nil {
-		//fmt.Printf("%#v\n", node)
 		if fun, is := node.(*ast.FuncDecl); is {
 			stats := newFunctionStats(fun.Name.Name, v.fset.Position(fun.Pos()).String())
+			if fun.Recv != nil && len(fun.Recv.List) > 0 {
+				ty := fun.Recv.List[0].Type
+				if st, is := ty.(*ast.StarExpr); is {
+					stats.Receiver = fmt.Sprintf("*%v", st.X)
+				} else {
+					stats.Receiver = fmt.Sprintf("%v", ty)
+				}
+			}
 			calculateLines(stats, v.offset, fun, v.contents, v.file.Comments)
 			calculateComplexity(stats, fun)
 			calculateNesting(stats, v.offset, fun, v.contents)

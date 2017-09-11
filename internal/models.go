@@ -19,8 +19,8 @@ type CmdParams struct {
 }
 
 type FunctionStats struct {
-	Name, Location string
-	stats          map[FuncMeasurement]float64
+	Receiver, Name, Location string
+	stats                    map[FuncMeasurement]float64
 }
 
 func newFunctionStats(name, location string) *FunctionStats {
@@ -29,6 +29,13 @@ func newFunctionStats(name, location string) *FunctionStats {
 		Location: location,
 		stats:    map[FuncMeasurement]float64{},
 	}
+}
+
+func (fs FunctionStats) FuncWithRecv() string {
+	if fs.Receiver == "" {
+		return fs.Name
+	}
+	return fmt.Sprintf("%s.%s", fs.Receiver, fs.Name)
 }
 
 func (fs FunctionStats) Get(ty FuncMeasurement) (float64, error) {
