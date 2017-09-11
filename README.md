@@ -1,4 +1,4 @@
-[![Build Status](https://api.travis-ci.org/tkrajina/golongfuncs)](https://travis-ci.org/tkrajina/golongfuncs)
+[![Build Status](https://travis-ci.org/tkrajina/golongfuncs.svg?branch=master)](https://travis-ci.org/tkrajina/golongfuncs)
 
 # GoLongFuncs
 
