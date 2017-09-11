@@ -33,9 +33,9 @@ func newFunctionStats(name, location string) *FunctionStats {
 
 func (fs FunctionStats) FuncWithRecv() string {
 	if fs.Receiver == "" {
-		return fs.Name
+		return fs.Name + ""
 	}
-	return fmt.Sprintf("%s.%s", fs.Receiver, fs.Name)
+	return fmt.Sprintf("(%s) %s", fs.Receiver, fs.Name)
 }
 
 func (fs FunctionStats) Get(ty FuncMeasurement) (float64, error) {
