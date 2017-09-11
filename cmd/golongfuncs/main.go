@@ -18,7 +18,7 @@ func main() {
 	var ignoreRegexp, types string
 
 	var params internal.CmdParams
-	flag.StringVar(&types, "type", string(internal.Lines), "Type of stats, valid types are: "+strings.Join(ty, ", "))
+	flag.StringVar(&types, "type", fmt.Sprintf("%s,%s,%s", internal.Lines, internal.Complexity, internal.MaxNesting), "Type of stats, valid types are: "+strings.Join(ty, ", "))
 	flag.Float64Var(&params.Treshold, "treshold", 0, "Min value, functions with value less than this will be ignored")
 	flag.IntVar(&params.MinLines, "min-lines", 10, "Functions shorter than this will be ignored")
 	flag.IntVar(&params.Top, "top", 25, "Show only top n functions")
