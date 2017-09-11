@@ -61,11 +61,7 @@ func printStats(params internal.CmdParams, stats []internal.FunctionStats) {
 		}
 		lines, _ := st.Get(internal.Lines)
 		if val >= params.Treshold && int(lines) >= params.MinLines {
-			loc := st.Location
-			if len(loc) >= 38 {
-				loc = "..." + loc[len(loc)-35:]
-			}
-			fmt.Printf("%60s %-40s", st.FuncWithRecv(), loc)
+			fmt.Printf("%40s %-40s", shortenTo(st.FuncWithRecv(), 40), shortenTo(st.Location, 40))
 			printSingleStat(params.Types[0], val)
 			count += 1
 			if len(params.Types) > 1 {
@@ -80,6 +76,13 @@ func printStats(params internal.CmdParams, stats []internal.FunctionStats) {
 			return
 		}
 	}
+}
+
+func shortenTo(str string, l int) string {
+	if len(str) > l {
+		return "..." + str[len(str)-l+5:]
+	}
+	return str
 }
 
 func printSingleStat(ty internal.FuncMeasurement, val float64) {
