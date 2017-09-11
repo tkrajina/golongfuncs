@@ -33,19 +33,21 @@ In addition to those, you can combine measures. Examples:
 
 Find longest functions:
 
-    $ golongfuncs <path>
+    $ golongfuncs <go_file>
+    $ golongfuncs <directory>
+    $ golongfuncs <directory>/...
 
 The 50 longest functions in the code:
 
-    $ golongfuncs -top 50 <path>
+    $ golongfuncs -top 50 ./...
 
 The most complex functions:
 
-    $ golongfuncs -type complexity <path>
+    $ golongfuncs -type complexity ./...
 
 The tool can output multiple measures, but the result is always ordered by the first column (in this case `complexity`):
 
-    $ golongfuncs -type complexity,lines,len <path>
+    $ golongfuncs -type complexity,lines,len ./...
 
 Find long functions, but calculate also their complexity, avg complexity and avg nesting:
 
@@ -69,8 +71,8 @@ Find functions longer than 5 lines with avg nesting (per line of code) bigger th
 
 Find functions with longest average line length:
 
-    $ golongfuncs -type len/lines
-    $ golongfuncs -type total-len/total-lines
+    $ golongfuncs -type len/lines ./...
+    $ golongfuncs -type total-len/total-lines ./...
 
 By default, functions shorter than 10 lines are ignored. You can change that with `-min-lines <n>`.
 

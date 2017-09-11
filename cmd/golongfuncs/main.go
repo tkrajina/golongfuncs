@@ -29,7 +29,7 @@ func main() {
 
 	paths := flag.Args()
 	if len(paths) == 0 {
-		paths = append(paths, ".")
+		paths = append(paths, "./...")
 	}
 
 	prepareParams(&params, types, ignoreRegexp)

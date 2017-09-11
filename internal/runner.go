@@ -6,6 +6,7 @@ import (
 	"go/token"
 	"io/ioutil"
 	"os"
+	"path"
 	"path/filepath"
 	"sort"
 	"strings"
@@ -19,7 +20,9 @@ func isDir(filename string) bool {
 func Do(params CmdParams, paths []string) []FunctionStats {
 	var stats []FunctionStats
 	for _, path := range paths {
-		if isDir(path) {
+		if strings.HasSuffix(path, "/...") {
+			stats = append(stats, analyzeDirRecursively(params, path[:len(path)-3])...)
+		} else if isDir(path) {
 			stats = append(stats, analyzeDir(params, path)...)
 		} else {
 			stats = append(stats, analyzeFile(params, path)...)
@@ -37,6 +40,10 @@ func Do(params CmdParams, paths []string) []FunctionStats {
 
 func analyzeFile(params CmdParams, fname string) []FunctionStats {
 	stats := []FunctionStats{}
+
+	if !strings.HasSuffix(fname, ".go") {
+		return stats
+	}
 
 	if params.Ignore != nil && params.Ignore.MatchString(fname) {
 		//fmt.Println("Ignored file", fname)
@@ -63,6 +70,20 @@ func analyzeFile(params CmdParams, fname string) []FunctionStats {
 }
 
 func analyzeDir(params CmdParams, dirname string) []FunctionStats {
+	finfos, err := ioutil.ReadDir(dirname)
+	if err != nil {
+		PrintUsage("Error reading %s: %s", dirname, err.Error())
+	}
+
+	stats := []FunctionStats{}
+	for _, fi := range finfos {
+		stats = append(stats, analyzeFile(params, path.Join(dirname, fi.Name()))...)
+	}
+
+	return stats
+}
+
+func analyzeDirRecursively(params CmdParams, dirname string) []FunctionStats {
 	stats := []FunctionStats{}
 
 	err := filepath.Walk(dirname, func(path string, info os.FileInfo, err error) error {
