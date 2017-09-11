@@ -4,6 +4,16 @@
 
 `golongfuncs` is a tool for searching "long" functions by various measures (and combinations of measures).
 
+This tool can help you to answer questions line:
+
+* What are the longest functions with a total complexity of more than *x*?
+* What are the longest functions with a complexity **per line of code** more than *x*?
+* What are the longest functions with average block nesting more than *n*?
+* What are the longest functions with max block nesting more than *n*?
+* etc.
+
+In other words, it will help you filter long **and complex** functions from those that are just **long**.
+
 ## Installation
 
      go get -u github.com/tkrajina/golongfuncs/cmd/golongfuncs
@@ -14,13 +24,14 @@ This tool can calculate the following function "length" measures:
 
 * `lines`: Number of lines **without empty lines, lines ending blocks (containing only `}`), and comments**,
 * `total-lines`: Number of lines **including empty lines and comments**,
-* `complexity`: Cyclomatic complexity (from [gocyclo](https://github.com/fzipp/gocyclo)),
-* `max-nesting`: Max nested blocks depth (note, struct initializations are not counted),
-* `total-nesting`: Total nesting (in other words, if the code is formatted properly -- every indentation tab is counted once)
 * `len`: Number of characters in the function (without comments and empty lines).
 * `total-len`: Number of characters in the function (with comments and empty lines).
 * `comments`: Number of comments. Multiline comments are counted once,
 * `comment-lines`: Number of comment lines,
+
+* `complexity`: Cyclomatic complexity (from [gocyclo](https://github.com/fzipp/gocyclo)),
+* `max-nesting`: Max nested blocks depth (note, struct initializations are not counted),
+* `total-nesting`: Total nesting (in other words, if the code is formatted properly -- every indentation tab is counted once)
 
 In addition to those, you can combine measures. Examples:
 
@@ -45,6 +56,10 @@ The most complex functions:
 
     $ golongfuncs -type complexity ./...
 
+The most complex functions longer than 50 lines:
+
+    $ golongfuncs -min-lines 50 -type complexity ./...
+
 The tool can output multiple measures, but the result is always ordered by the first column (in this case `complexity`):
 
     $ golongfuncs -type complexity,lines,len ./...
@@ -62,11 +77,13 @@ Find long functions, but calculate also their complexity, avg complexity and avg
                       TestNesting golongfuncs/runner_test.go:438:1        lines=15.0    complexity=2.0    complexity/lines=0.1    total-nesting/total-lines=0.9
 
 You can see that `ExampleVeryLongfunction` is long (305 lines), but average complexity is low (0.1) and avg nesting is 1.0.
+Avg nesting 1.0 means that there are **no nested blocks** in this function. If half the lines were in a nested block (for example a big `if &lt;expr&gt; { ...code... }` block of code) the avg nesting would be 1.5.
+
 The `ExampleVeryComplexFunction` is shorter (69 lines) but with an average complexity (per line of code) of 0.6 and avg nesting 6.7 and that is probably a good hint that the function needs refactoring.
 
-Find functions longer than 5 lines with avg nesting (per line of code) bigger than 5 and include total lines count (including comments and empty lines) and lines count (without comments and empty lines):
+Find functions longer than 5 lines with avg nesting (per line of code) bigger than 5 and include total lines count and lines count:
 
-    $ golongfuncs -type total-nesting/total-lines,total-lines -treshold 5 .
+    $ golongfuncs -type total-nesting/total-lines,total-lines,lines -treshold 5 .
             ExampleVeryComplexFunction golongfuncs/runner_test.go:10:1             total-nesting/total-lines=6.7  total-lines=108.0   lines=69.0
 
 Find functions with longest average line length:
