@@ -6,38 +6,45 @@
 
 This tool can help you to answer questions line:
 
-* What are the longest functions with a total complexity of more than *x*?
+* What are the longest functions with a **total complexity** of more than *x*?
 * What are the longest functions with a complexity **per line of code** more than *x*?
-* What are the longest functions with average block nesting more than *n*?
-* What are the longest functions with max block nesting more than *n*?
+* What are the longest functions with **average block nesting** more than *n*?
+* What are the longest functions with **max block nesting** more than *n*?
+* What are the functions with the biggest **number of control flows**?
+* What are the functions with the most **variables defined**?
+* What are the functions with the most **variables and assignments**?
 * etc.
 
 In other words, it will help you filter long **and complex** functions from those that are just **long**.
 
 ## Installation
 
-     go get -u github.com/tkrajina/golongfuncs/cmd/golongfuncs
+     go get -u github.com/tkrajina/golongfuncs/...
 
 ## Measures
 
-This tool can calculate the following function "length" measures:
+This tool can calculate the following function "length" and "complexity" measures:
 
 * `lines`: Number of lines **without empty lines, lines ending blocks (containing only `}`), and comments**,
-* `total-lines`: Number of lines **including empty lines and comments**,
+* `total_lines`: Number of lines **including empty lines and comments**,
 * `len`: Number of characters in the function (without comments and empty lines).
-* `total-len`: Number of characters in the function (with comments and empty lines).
+* `total_len`: Number of characters in the function (with comments and empty lines).
 * `comments`: Number of comments. Multiline comments are counted once,
-* `comment-lines`: Number of comment lines,
+* `comment_lines`: Number of comment lines,
+* `complexity`: [Cyclomatic complexity](https://en.wikipedia.org/wiki/Cyclomatic_complexity) (from [gocyclo](https://github.com/fzipp/gocyclo)),
+* `max_nesting`: Max nested blocks depth (note, struct initializations are not counted),
+* `total_nesting`: Total nesting (in other words, if the code is formatted properly -- every indentation tab is counted once)
+* `in_params`: The number of function input parameters
+* `out_params`: The number of function output parameters
+* `variables`: The number of variables in the scope of the function (without function arguments and function receivers)
+* `assignments`: The number of assignments in the function (including variable declarations, `:=`, `=`, `+=`, `-=`...)
+* `control`: The number of control flow statements (`if`, `else`, `switch`, `case`, `default`, `select` and `defer`)
 
-* `complexity`: Cyclomatic complexity (from [gocyclo](https://github.com/fzipp/gocyclo)),
-* `max-nesting`: Max nested blocks depth (note, struct initializations are not counted),
-* `total-nesting`: Total nesting (in other words, if the code is formatted properly -- every indentation tab is counted once)
-
-In addition to those, you can combine measures. Examples:
+In addition to those, you can combine measures. For example:
 
 * `complexity/lines`: Calculates average complexity per line of code.
-* `total-nesting/total-lines`: Calculates average nesting (indentation) per line.
-* `comment-lines/total-lines`: Calculates lines of functions per line.
+* `total_nesting/total_lines`: Calculates average nesting (indentation) per line.
+* `comment_lines/total_lines`: Calculates lines of functions per line.
 * etc.
 
 ## Usage
@@ -66,15 +73,15 @@ The tool can output multiple measures, but the result is always ordered by the f
 
 Find long functions, but calculate also their complexity, avg complexity and avg nesting:
 
-    $ golongfuncs -type lines,complexity,complexity/lines,total-nesting/total-lines .
-          ExampleVeryLongfunction golongfuncs/runner_test.go:118:1       lines=305.0    complexity=1.0    complexity/lines=0.1    total-nesting/total-lines=1.0
-       ExampleVeryComplexFunction golongfuncs/runner_test.go:10:1         lines=69.0   complexity=44.0    complexity/lines=0.6    total-nesting/total-lines=6.7
-                       printStats main.go:54:1                            lines=21.0    complexity=9.0    complexity/lines=0.4    total-nesting/total-lines=2.5
-                             main main.go:12:1                            lines=19.0    complexity=3.0    complexity/lines=0.2    total-nesting/total-lines=1.0
-                        TestLines golongfuncs/runner_test.go:476:1        lines=15.0    complexity=2.0    complexity/lines=0.1    total-nesting/total-lines=0.9
-                       NewVisitor golongfuncs/runner.go:94:1              lines=15.0    complexity=3.0    complexity/lines=0.2    total-nesting/total-lines=1.0
-                              Get golongfuncs/models.go:34:1              lines=15.0    complexity=7.0    complexity/lines=0.5    total-nesting/total-lines=1.7
-                      TestNesting golongfuncs/runner_test.go:438:1        lines=15.0    complexity=2.0    complexity/lines=0.1    total-nesting/total-lines=0.9
+    $ golongfuncs -type lines,complexity,complexity/lines,total_nesting/total_lines .
+          ExampleVeryLongfunction golongfuncs/runner_test.go:118:1       lines=305.0    complexity=1.0    complexity/lines=0.1    total_nesting/total_lines=1.0
+       ExampleVeryComplexFunction golongfuncs/runner_test.go:10:1         lines=69.0   complexity=44.0    complexity/lines=0.6    total_nesting/total_lines=6.7
+                       printStats main.go:54:1                            lines=21.0    complexity=9.0    complexity/lines=0.4    total_nesting/total_lines=2.5
+                             main main.go:12:1                            lines=19.0    complexity=3.0    complexity/lines=0.2    total_nesting/total_lines=1.0
+                        TestLines golongfuncs/runner_test.go:476:1        lines=15.0    complexity=2.0    complexity/lines=0.1    total_nesting/total_lines=0.9
+                       NewVisitor golongfuncs/runner.go:94:1              lines=15.0    complexity=3.0    complexity/lines=0.2    total_nesting/total_lines=1.0
+                              Get golongfuncs/models.go:34:1              lines=15.0    complexity=7.0    complexity/lines=0.5    total_nesting/total_lines=1.7
+                      TestNesting golongfuncs/runner_test.go:438:1        lines=15.0    complexity=2.0    complexity/lines=0.1    total_nesting/total_lines=0.9
 
 You can see that `ExampleVeryLongfunction` is long (305 lines), but average complexity is low (0.1) and avg nesting is 1.0.
 Avg nesting 1.0 means that there are **no nested blocks** in this function. If half the lines were in a nested block (for example a big `if &lt;expr&gt; { ...code... }` block of code) the avg nesting would be 1.5.
@@ -83,13 +90,13 @@ The `ExampleVeryComplexFunction` is shorter (69 lines) but with an average compl
 
 Find functions longer than 5 lines with avg nesting (per line of code) bigger than 5 and include total lines count and lines count:
 
-    $ golongfuncs -type total-nesting/total-lines,total-lines,lines -treshold 5 .
-            ExampleVeryComplexFunction golongfuncs/runner_test.go:10:1             total-nesting/total-lines=6.7  total-lines=108.0   lines=69.0
+    $ golongfuncs -type total_nesting/total_lines,total_lines,lines -treshold 5 .
+            ExampleVeryComplexFunction golongfuncs/runner_test.go:10:1             total_nesting/total_lines=6.7  total_lines=108.0   lines=69.0
 
 Find functions with longest average line length:
 
     $ golongfuncs -type len/lines ./...
-    $ golongfuncs -type total-len/total-lines ./...
+    $ golongfuncs -type total_len/total_lines ./...
 
 By default, functions shorter than 10 lines are ignored. You can change that with `-min-lines <n>`.
 

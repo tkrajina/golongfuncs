@@ -25,6 +25,7 @@ func main() {
 	flag.BoolVar(&params.IncludeTests, "include-tests", false, "Include tests")
 	flag.BoolVar(&params.IncludeVendor, "include-vendor", false, "Include vendored files")
 	flag.StringVar(&ignoreRegexp, "ignore", "", "Regexp for files/directories to ignore")
+	flag.BoolVar(&params.Verbose, "verbose", false, "Verbose")
 	flag.Parse()
 
 	paths := flag.Args()

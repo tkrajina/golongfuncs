@@ -16,6 +16,15 @@ type CmdParams struct {
 	IncludeTests  bool
 	IncludeVendor bool
 	Ignore        *regexp.Regexp
+	Verbose       bool
+}
+
+func (cp CmdParams) Printf(s string, i ...interface{}) {
+	if !cp.Verbose {
+		return
+	}
+	fmt.Printf(s, i...)
+	fmt.Println()
 }
 
 type FunctionStats struct {

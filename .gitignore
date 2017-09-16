@@ -7,3 +7,5 @@ tags
 *.iml
 # Random
 .DS_Store
+TODO*
+golongfuncs

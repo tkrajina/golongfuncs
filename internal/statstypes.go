@@ -4,14 +4,19 @@ type FuncMeasurement string
 
 const (
 	Lines        FuncMeasurement = "lines"
-	TotalLines                   = "total-lines"
+	TotalLines                   = "total_lines"
 	Len                          = "len"
-	TotalLen                     = "total-len"
-	CommentLines                 = "comment-lines"
+	TotalLen                     = "total_len"
+	CommentLines                 = "comment_lines"
 	Comments                     = "comments"
 	Complexity                   = "complexity"
-	MaxNesting                   = "max-nesting"
-	TotalNesting                 = "total-nesting"
+	MaxNesting                   = "max_nesting"
+	TotalNesting                 = "total_nesting"
+	InputParams                  = "in_params"
+	OutputParams                 = "out_params"
+	Variables                    = "variables"
+	Assignments                  = "assignments"
+	Control                      = "control"
 )
 
 var AllTypes = []FuncMeasurement{
@@ -24,6 +29,11 @@ var AllTypes = []FuncMeasurement{
 	Complexity,
 	MaxNesting,
 	TotalNesting,
+	InputParams,
+	OutputParams,
+	Variables,
+	Assignments,
+	Control,
 }
 
 func isValidBasicType(ty FuncMeasurement) bool {

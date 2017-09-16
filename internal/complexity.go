@@ -5,32 +5,36 @@ import (
 	"go/token"
 )
 
-/*
-Taken from https://github.com/fzipp/gocyclo
-*/
-
 func calculateComplexity(stats *FunctionStats, fun *ast.FuncDecl) {
-	stats.Set(Complexity, float64(complexity(fun)))
-}
-
-func complexity(fn *ast.FuncDecl) int {
 	v := complexityVisitor{}
-	ast.Walk(&v, fn)
-	return v.Complexity
+	ast.Walk(&v, fun)
+	stats.Set(Complexity, float64(v.complexity))
+	stats.Set(Control, float64(v.controlFlows))
 }
 
 type complexityVisitor struct {
-	Complexity int
+	complexity   int
+	controlFlows int
 }
 
 func (v *complexityVisitor) Visit(n ast.Node) ast.Visitor {
-	switch n := n.(type) {
+	switch t := n.(type) {
 	case *ast.FuncDecl, *ast.IfStmt, *ast.ForStmt, *ast.RangeStmt, *ast.CaseClause, *ast.CommClause:
-		v.Complexity++
+		v.complexity++
 	case *ast.BinaryExpr:
-		if n.Op == token.LAND || n.Op == token.LOR {
-			v.Complexity++
+		if t.Op == token.LAND || t.Op == token.LOR {
+			v.complexity++
 		}
+	}
+
+	switch n := n.(type) {
+	case *ast.IfStmt:
+		v.controlFlows++
+		if n.Else != nil {
+			v.controlFlows++
+		}
+	case *ast.ForStmt, *ast.RangeStmt, *ast.CaseClause, *ast.CommClause, *ast.DeferStmt, *ast.SelectStmt:
+		v.controlFlows++
 	}
 	return v
 }
