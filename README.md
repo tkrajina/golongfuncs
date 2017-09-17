@@ -6,11 +6,11 @@
 
 This tool can help you to answer questions line:
 
-* What are the longest functions with a **total complexity** of more than *x*?
-* What are the longest functions with a complexity **per line of code** more than *x*?
-* What are the longest functions with **average block nesting** more than *n*?
+* What are the longest functions with **total complexity** more than *x*?
+* What are the longest functions with complexity **per line of code** more than *x*?
+* What are functions with the biggest **number of nested blocks**?
+* What are functions with the biggest number of **control flow statements**?
 * What are the longest functions with **max block nesting** more than *n*?
-* What are the functions with the biggest **number of control flows**?
 * What are the functions with the most **variables defined**?
 * What are the functions with the most **variables and assignments**?
 * etc.
@@ -55,21 +55,29 @@ Find longest functions:
     $ golongfuncs <directory>
     $ golongfuncs <directory>/...
 
-The 50 longest functions in the code:
+If path is not specified, golongfuncs assumes it is `./...`.
 
-    $ golongfuncs -top 50 ./...
+Show multiple measures:
 
-The most complex functions:
+    $ golongfuncs -type lines
+    $ golongfuncs -type lines,in_params
+    $ golongfuncs -type lines,in_params,complexity/lines
 
-    $ golongfuncs -type complexity ./...
+If multiple measures are specified, the results are sorded by the first column (in this example `lines`):
+
+By default the result shows only the top 20 results. Change that with `-top`:
+
+    $ golongfuncs -top 50
+
+By default, functions shorter than 10 lines are ignored. You can change that with `-min-lines <n>`.
+
+The 100 most complex functions:
+
+    $ golongfuncs -top 100 -type complexity ./...
 
 The most complex functions longer than 50 lines:
 
     $ golongfuncs -min-lines 50 -type complexity ./...
-
-The tool can output multiple measures, but the result is always ordered by the first column (in this case `complexity`):
-
-    $ golongfuncs -type complexity,lines,len ./...
 
 Find long functions, but calculate also their complexity, avg complexity and avg nesting:
 
@@ -97,8 +105,6 @@ Find functions with longest average line length:
 
     $ golongfuncs -type len/lines ./...
     $ golongfuncs -type total_len/total_lines ./...
-
-By default, functions shorter than 10 lines are ignored. You can change that with `-min-lines <n>`.
 
 Tests and vendored files are also ignored, use `-include-tests` and `-include-vendor` if you want to measure them.
 
