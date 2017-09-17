@@ -60,7 +60,8 @@ func analyzeFile(params CmdParams, fname string) []FunctionStats {
 	fset := token.NewFileSet()
 	f, err := parser.ParseFile(fset, fname, nil, parser.ParseComments)
 	if err != nil {
-		PrintUsage("Error opening parsing %s: %s", fname, err.Error())
+		fmt.Fprintf(os.Stderr, "Error parsing %s: %s\n", fname, err.Error())
+		return stats
 	}
 
 	//fmt.Println("file=", "pos=", f.Pos())
