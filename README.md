@@ -47,7 +47,17 @@ In addition to those, you can combine measures. For example:
 * `comment_lines/total_lines`: Calculates lines of functions per line.
 * etc.
 
-## Usage
+To calculate any of those measure for your Golang code:
+
+    $ golongfuncs -type variable
+    $ golongfuncs -type total_nesting
+    $ golongfuncs -type lines
+    $ golongfuncs -type lines,complexity
+    $ golongfuncs -type lines,complexity,complexity/lines
+
+Calling just `golongfuncs` (without arguments) is an alias for `golongfuncs -type lines`.
+
+## Usage examples
 
 Find longest functions:
 
