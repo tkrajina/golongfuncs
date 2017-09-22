@@ -32,7 +32,7 @@ func ParseTypes(types string) ([]FuncMeasurement, error) {
 	return res, nil
 }
 
-func calculateLines(stats *FunctionStats, offset int, fun *ast.FuncDecl, contents string, comments []*ast.CommentGroup) {
+func calculateLines(stats *FunctionStats, offset int, fun *ast.FuncDecl, contents string, comments []*ast.CommentGroup, funcDocs string) {
 	funcBody := contents[int(fun.Pos())-offset-1 : int(fun.End())-offset]
 	withoutComments := funcBody
 	onlyComments := ""
@@ -45,11 +45,40 @@ func calculateLines(stats *FunctionStats, offset int, fun *ast.FuncDecl, content
 		}
 	}
 
+	caseSensitive, caseInsensitive := countTodos(funcDocs, onlyComments)
+	stats.Set(Todos, float64(caseSensitive))
+	stats.Set(TodosCaseinsensitive, float64(caseInsensitive))
 	stats.Set(Len, float64(len([]rune(withoutComments))))
 	stats.Set(TotalLen, float64(len([]rune(funcBody))))
 	stats.Set(TotalLines, float64(countLines(funcBody)))
 	stats.Set(Lines, float64(countLines(withoutComments, "", "}")))
 	stats.Set(CommentLines, float64(countLines(onlyComments, "", "//", "/*", "*/")))
+}
+
+var todoTags = map[string]bool{
+	"HACK":  true,
+	"TODO":  true,
+	"NOTE":  true,
+	"FIXME": true,
+	"ASAP":  true,
+	"ISSUE": true,
+	"BUG":   true,
+	"WTF":   true,
+}
+
+func countTodos(strs ...string) (int, int) {
+	var caseSensitive, caseInsensitive int
+	for _, str := range strs {
+		for _, word := range strings.Fields(str) {
+			if _, is := todoTags[word]; is {
+				caseSensitive++
+			}
+			if _, is := todoTags[strings.ToUpper(word)]; is {
+				caseInsensitive++
+			}
+		}
+	}
+	return caseSensitive, caseInsensitive
 }
 
 func countLines(str string, ignoreLines ...string) int {
