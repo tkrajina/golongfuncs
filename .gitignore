@@ -1,10 +1,14 @@
 # Ctags
 tags
+#
 # Vim:
 *.sw*
-# IntelliJ
+#
+# IDEs
 .idea/
 *.iml
+.vscode/
+
 # Random
 .DS_Store
 TODO*
