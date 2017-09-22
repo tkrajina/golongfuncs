@@ -73,7 +73,7 @@ Show multiple measures:
     $ golongfuncs -type lines,in_params
     $ golongfuncs -type lines,in_params,complexity/lines
 
-If multiple measures are specified, the results are sorded by the first column (in this example `lines`):
+If multiple measures are specified, the results are sorted by the first column (in this example `lines`):
 
 By default the result shows only the top 20 results. Change that with `-top`:
 
