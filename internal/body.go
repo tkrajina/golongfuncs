@@ -6,6 +6,7 @@ import (
 	"go/ast"
 	"os"
 	"strings"
+	"unicode"
 )
 
 func PrintUsage(msg string, params ...interface{}) {
@@ -69,7 +70,9 @@ var todoTags = map[string]bool{
 func countTodos(strs ...string) (int, int) {
 	var caseSensitive, caseInsensitive int
 	for _, str := range strs {
-		for _, word := range strings.Fields(str) {
+		for _, word := range strings.FieldsFunc(str, func(r rune) bool {
+			return !unicode.IsLetter(r)
+		}) {
 			if _, is := todoTags[word]; is {
 				caseSensitive++
 			}

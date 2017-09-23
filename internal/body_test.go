@@ -10,7 +10,7 @@ import (
 
 // WTF BUG NOTE
 func sampleFunc() {
-	// TODO
+	// TODO[TK]
 	// todo
 	// FIXME
 }
