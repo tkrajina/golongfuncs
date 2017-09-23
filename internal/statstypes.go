@@ -18,7 +18,7 @@ const (
 	Assignments                          = "assignments"
 	Control                              = "control"
 	Todos                                = "todos"
-	TodosCaseinsensitive                 = "todos-case-insensitive"
+	TodosCaseinsensitive                 = "todos_case_insensitive"
 )
 
 var AllTypes = []FuncMeasurement{
