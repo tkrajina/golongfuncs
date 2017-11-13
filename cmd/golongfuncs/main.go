@@ -15,7 +15,7 @@ func main() {
 		ty[n] = string(internal.AllTypes[n])
 	}
 
-	var ignoreRegexp, types string
+	var ignoreFilesRegexp, ignoreFuncsRegexp, types string
 
 	var params internal.CmdParams
 	flag.StringVar(&types, "type", fmt.Sprintf("%s,%s,%s", internal.Lines, internal.Complexity, internal.MaxNesting), "Type of stats, valid types are: "+strings.Join(ty, ", "))
@@ -24,7 +24,8 @@ func main() {
 	flag.IntVar(&params.Top, "top", 25, "Show only top n functions")
 	flag.BoolVar(&params.IncludeTests, "include-tests", false, "Include tests")
 	flag.BoolVar(&params.IncludeVendor, "include-vendor", false, "Include vendored files")
-	flag.StringVar(&ignoreRegexp, "ignore", "", "Regexp for files/directories to ignore")
+	flag.StringVar(&ignoreFilesRegexp, "ignore", "", "Regexp for files/directories to ignore")
+	flag.StringVar(&ignoreFuncsRegexp, "ignore-func", "", "Regexp for functions to ignore")
 	flag.BoolVar(&params.Verbose, "verbose", false, "Verbose")
 	flag.Parse()
 
@@ -33,23 +34,30 @@ func main() {
 		paths = append(paths, "./...")
 	}
 
-	prepareParams(&params, types, ignoreRegexp)
+	prepareParams(&params, types, ignoreFilesRegexp, ignoreFuncsRegexp)
 	stats := internal.Do(params, paths)
 	printStats(params, stats)
 }
 
-func prepareParams(params *internal.CmdParams, types, ignoreRegexp string) {
+func prepareParams(params *internal.CmdParams, types, ignoreFilesRegexp, ignoreFuncsRegexp string) {
 	var err error
 	params.Types, err = internal.ParseTypes(types)
 	if err != nil {
 		internal.PrintUsage("Invalid type(s) '%s'", types)
 	}
-	if len(ignoreRegexp) > 0 {
-		r, err := regexp.Compile(ignoreRegexp)
+	if len(ignoreFilesRegexp) > 0 {
+		r, err := regexp.Compile(ignoreFilesRegexp)
 		if err != nil {
-			internal.PrintUsage("Invalid ignore regexp '%s'", ignoreRegexp)
+			internal.PrintUsage("Invalid ignore regexp '%s'", ignoreFilesRegexp)
 		}
 		params.Ignore = r
+	}
+	if len(ignoreFuncsRegexp) > 0 {
+		r, err := regexp.Compile(ignoreFuncsRegexp)
+		if err != nil {
+			internal.PrintUsage("Invalid ignore regexp '%s'", ignoreFuncsRegexp)
+		}
+		params.IgnoreFuncs = r
 	}
 }
 

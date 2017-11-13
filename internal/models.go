@@ -16,6 +16,7 @@ type CmdParams struct {
 	IncludeTests  bool
 	IncludeVendor bool
 	Ignore        *regexp.Regexp
+	IgnoreFuncs   *regexp.Regexp
 	Verbose       bool
 }
 

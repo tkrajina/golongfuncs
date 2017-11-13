@@ -145,6 +145,11 @@ func (v *Visitor) Visit(node ast.Node) ast.Visitor {
 	switch n := node.(type) {
 	case *ast.FuncDecl:
 		fun := n
+		if v.params.IgnoreFuncs != nil {
+			if v.params.IgnoreFuncs.MatchString(fun.Name.Name) {
+				return v
+			}
+		}
 		stats := newFunctionStats(fun.Name.Name, v.fset.Position(fun.Pos()).String())
 		v.params.Printf("Visiting %s in %s", fun.Name.Name, stats.Location)
 		if fun.Recv != nil && len(fun.Recv.List) > 0 {
