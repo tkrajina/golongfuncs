@@ -120,6 +120,8 @@ Tests and vendored files are also ignored, use `-include-tests` and `-include-ve
 
 Arbitrary files/directories can be ignored with `-ignore "<regexp>"`. For example, if you want to ignore Golang files containing `_generated.go`: `-ignore "^.*_generated.go$"`.
 
+Functions can be ignored with `-ignore-func "regexp"`.
+
 # License
 
 This tool is licensed under the [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0)
