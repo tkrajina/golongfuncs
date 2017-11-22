@@ -108,7 +108,7 @@ The `ExampleVeryComplexFunction` is shorter (69 lines) but with an average compl
 
 Find functions longer than 5 lines with avg nesting (per line of code) bigger than 5 and include total lines count and lines count:
 
-    $ golongfuncs -type total_nesting/total_lines,total_lines,lines -treshold 5 .
+    $ golongfuncs -type total_nesting/total_lines,total_lines,lines -threshold 5 .
             ExampleVeryComplexFunction golongfuncs/runner_test.go:10:1             total_nesting/total_lines=6.7  total_lines=108.0   lines=69.0
 
 Find functions with longest average line length:

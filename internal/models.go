@@ -10,7 +10,7 @@ import (
 
 type CmdParams struct {
 	Types         []FuncMeasurement
-	Treshold      float64
+	Threshold     float64
 	MinLines      int
 	Top           int
 	IncludeTests  bool

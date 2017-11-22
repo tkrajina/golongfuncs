@@ -19,7 +19,7 @@ func main() {
 
 	var params internal.CmdParams
 	flag.StringVar(&types, "type", fmt.Sprintf("%s,%s,%s", internal.Lines, internal.Complexity, internal.MaxNesting), "Type of stats, valid types are: "+strings.Join(ty, ", "))
-	flag.Float64Var(&params.Treshold, "treshold", 0, "Min value, functions with value less than this will be ignored")
+	flag.Float64Var(&params.Threshold, "threshold", 0, "Min value, functions with value less than this will be ignored")
 	flag.IntVar(&params.MinLines, "min-lines", 10, "Functions shorter than this will be ignored")
 	flag.IntVar(&params.Top, "top", 25, "Show only top n functions")
 	flag.BoolVar(&params.IncludeTests, "include-tests", false, "Include tests")
@@ -69,7 +69,7 @@ func printStats(params internal.CmdParams, stats []internal.FunctionStats) {
 			internal.PrintUsage("Invalid type %s\n", params.Types[0])
 		}
 		lines, _ := st.Get(internal.Lines)
-		if val >= params.Treshold && int(lines) >= params.MinLines {
+		if val >= params.Threshold && int(lines) >= params.MinLines {
 			fmt.Printf("%40s %-40s", shortenTo(st.FuncWithRecv(), 40), shortenTo(st.Location, 40))
 			printSingleStat(params.Types[0], val)
 			count += 1
