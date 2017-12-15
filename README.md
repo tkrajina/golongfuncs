@@ -39,6 +39,7 @@ This tool can calculate the following function "length" and "complexity" measure
 * `variables`: The number of variables in the scope of the function (without function arguments and function receivers)
 * `assignments`: The number of assignments in the function (including variable declarations, `:=`, `=`, `+=`, `-=`...)
 * `control`: The number of control flow statements (`if`, `else`, `switch`, `case`, `default`, `select` and `defer`)
+* `todos`: The number "TODO" tags found in comments (including function body and the commend preceding the function). Tags are `HACK`, `TODO`, `NOTE`, `FIXME`, `ASAP`, `ISSUE`, `BUG` and `WTF`.
 
 In addition to those, you can combine measures. For example:
 
