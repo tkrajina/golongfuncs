@@ -60,6 +60,8 @@ Calling just `golongfuncs` (without arguments) is an alias for `golongfuncs -typ
 
 ## Usage examples
 
+    $ golongfuncs [flags] +[types] [paths...]
+
 Find longest functions:
 
     $ golongfuncs <go_file>
@@ -73,6 +75,10 @@ Show multiple measures:
     $ golongfuncs -type lines
     $ golongfuncs -type lines,in_params
     $ golongfuncs -type lines,in_params,complexity/lines
+
+A shorter way to specify types is with `+`:
+
+    $ golongfuncs +lines,complexity,complexity/lines
 
 If multiple measures are specified, the results are sorted by the first column (in this example `lines`):
 

@@ -18,7 +18,7 @@ func main() {
 	var ignoreFilesRegexp, ignoreFuncsRegexp, types string
 
 	var params internal.CmdParams
-	flag.StringVar(&types, "type", fmt.Sprintf("%s,%s,%s", internal.Lines, internal.Complexity, internal.MaxNesting), "Type of stats, valid types are: "+strings.Join(ty, ", "))
+	flag.StringVar(&types, "type", "", "Type of stats, valid types are: "+strings.Join(ty, ", "))
 	flag.Float64Var(&params.Threshold, "threshold", 0, "Min value, functions with value less than this will be ignored")
 	flag.IntVar(&params.MinLines, "min-lines", 10, "Functions shorter than this will be ignored")
 	flag.IntVar(&params.Top, "top", 25, "Show only top n functions")
@@ -29,10 +29,27 @@ func main() {
 	flag.BoolVar(&params.Verbose, "verbose", false, "Verbose")
 	flag.Parse()
 
-	paths := flag.Args()
-	if len(paths) == 0 {
-		paths = append(paths, "./...")
+	args := flag.Args()
+	if len(args) == 0 {
+		args = append(args, "./...")
 	}
+
+	var paths []string
+	for _, p := range args {
+		if p[0] == '+' {
+			types += "," + p[1:]
+			types = strings.Trim(types, ",")
+		} else {
+			paths = append(paths, p)
+		}
+	}
+
+	if len(types) == 0 {
+		types = fmt.Sprintf("%s,%s,%s", internal.Lines, internal.Complexity, internal.MaxNesting)
+	}
+
+	fmt.Println("types=", types)
+	fmt.Println("paths=", paths)
 
 	prepareParams(&params, types, ignoreFilesRegexp, ignoreFuncsRegexp)
 	stats := internal.Do(params, paths)
