@@ -29,27 +29,21 @@ func main() {
 	flag.BoolVar(&params.Verbose, "verbose", false, "Verbose")
 	flag.Parse()
 
-	args := flag.Args()
-	if len(args) == 0 {
-		args = append(args, "./...")
-	}
-
 	var paths []string
-	for _, p := range args {
-		if p[0] == '+' {
-			types += "," + p[1:]
-			types = strings.Trim(types, ",")
+	for _, arg := range flag.Args() {
+		if arg[0] == '+' {
+			types = strings.Trim(types+","+arg[1:], ",")
 		} else {
-			paths = append(paths, p)
+			paths = append(paths, arg)
 		}
 	}
 
+	if len(paths) == 0 {
+		paths = append(paths, "./...")
+	}
 	if len(types) == 0 {
 		types = fmt.Sprintf("%s,%s,%s", internal.Lines, internal.Complexity, internal.MaxNesting)
 	}
-
-	fmt.Println("types=", types)
-	fmt.Println("paths=", paths)
 
 	prepareParams(&params, types, ignoreFilesRegexp, ignoreFuncsRegexp)
 	stats := internal.Do(params, paths)
