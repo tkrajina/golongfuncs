@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"os"
 	"regexp"
 	"strings"
 
@@ -17,8 +18,19 @@ func main() {
 
 	var ignoreFilesRegexp, ignoreFuncsRegexp, types string
 
+	args := []string{}
+	for _, arg := range os.Args {
+		if strings.HasPrefix(arg, "+") {
+			types += "," + arg[1:]
+		} else {
+			args = append(args, arg)
+		}
+	}
+	types = strings.Trim(types, ",")
+	os.Args = args
+
 	var params internal.CmdParams
-	flag.StringVar(&types, "type", "", "Type of stats, valid types are: "+strings.Join(ty, ", "))
+	flag.StringVar(&types, "type", types, "Type of stats, valid types are: "+strings.Join(ty, ", "))
 	flag.Float64Var(&params.Threshold, "threshold", 0, "Min value, functions with value less than this will be ignored")
 	flag.IntVar(&params.MinLines, "min-lines", 10, "Functions shorter than this will be ignored")
 	flag.IntVar(&params.Top, "top", 25, "Show only top n functions")
@@ -29,14 +41,7 @@ func main() {
 	flag.BoolVar(&params.Verbose, "verbose", false, "Verbose")
 	flag.Parse()
 
-	var paths []string
-	for _, arg := range flag.Args() {
-		if arg[0] == '+' {
-			types = strings.Trim(types+","+arg[1:], ",")
-		} else {
-			paths = append(paths, arg)
-		}
-	}
+	paths := flag.Args()
 
 	if len(paths) == 0 {
 		paths = append(paths, "./...")
