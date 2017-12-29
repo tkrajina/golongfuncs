@@ -50,13 +50,13 @@ In addition to those, you can combine measures. For example:
 
 To calculate any of those measure for your Golang code:
 
-    $ golongfuncs -type variable
-    $ golongfuncs -type total_nesting
-    $ golongfuncs -type lines
-    $ golongfuncs -type lines,complexity
-    $ golongfuncs -type lines,complexity,complexity/lines
+    $ golongfuncs +variable
+    $ golongfuncs +total_nesting
+    $ golongfuncs +lines
+    $ golongfuncs +lines,complexity
+    $ golongfuncs +lines,complexity,complexity/lines
 
-Calling just `golongfuncs` (without arguments) is an alias for `golongfuncs -type lines`.
+Calling just `golongfuncs` (without arguments) is an alias for `golongfuncs +lines`.
 
 ## Usage examples
 
@@ -72,13 +72,10 @@ If path is not specified, golongfuncs assumes it is `./...`.
 
 Show multiple measures:
 
-    $ golongfuncs -type lines
-    $ golongfuncs -type lines,in_params
-    $ golongfuncs -type lines,in_params,complexity/lines
-
-A shorter way to specify types is with `+`:
-
-    $ golongfuncs +lines,complexity,complexity/lines
+    $ golongfuncs +lines
+    $ golongfuncs +lines,in_params
+    $ golongfuncs +lines,in_params,complexity/lines
+    $ golongfuncs +lines +in_params +complexity/lines
 
 If multiple measures are specified, the results are sorted by the first column (in this example `lines`):
 
@@ -90,15 +87,15 @@ By default, functions shorter than 10 lines are ignored. You can change that wit
 
 The 100 most complex functions:
 
-    $ golongfuncs -top 100 -type complexity ./...
+    $ golongfuncs -top 100 +complexity ./...
 
 The most complex functions longer than 50 lines:
 
-    $ golongfuncs -min-lines 50 -type complexity ./...
+    $ golongfuncs -min-lines 50 +complexity ./...
 
 Find long functions, but calculate also their complexity, avg complexity and avg nesting:
 
-    $ golongfuncs -type lines,complexity,complexity/lines,total_nesting/total_lines .
+    $ golongfuncs +lines,complexity,complexity/lines,total_nesting/total_lines .
           ExampleVeryLongfunction golongfuncs/runner_test.go:118:1       lines=305.0    complexity=1.0    complexity/lines=0.1    total_nesting/total_lines=1.0
        ExampleVeryComplexFunction golongfuncs/runner_test.go:10:1         lines=69.0   complexity=44.0    complexity/lines=0.6    total_nesting/total_lines=6.7
                        printStats main.go:54:1                            lines=21.0    complexity=9.0    complexity/lines=0.4    total_nesting/total_lines=2.5
@@ -115,15 +112,15 @@ The `ExampleVeryComplexFunction` is shorter (69 lines) but with an average compl
 
 Find functions longer than 5 lines with avg nesting (per line of code) bigger than 5 and include total lines count and lines count:
 
-    $ golongfuncs -type total_nesting/total_lines,total_lines,lines -threshold 5 .
+    $ golongfuncs +total_nesting/total_lines,total_lines,lines -threshold 5 .
             ExampleVeryComplexFunction golongfuncs/runner_test.go:10:1             total_nesting/total_lines=6.7  total_lines=108.0   lines=69.0
 
 Find functions with longest average line length:
 
-    $ golongfuncs -type len/lines ./...
-    $ golongfuncs -type total_len/total_lines ./...
+    $ golongfuncs +len/lines ./...
+    $ golongfuncs +total_len/total_lines ./...
 
-Tests and vendored files are also ignored, use `-include-tests` and `-include-vendor` if you want to measure them.
+Tests and vendored files are ignored, use `-include-tests` and `-include-vendor` if you want to measure them.
 
 Arbitrary files/directories can be ignored with `-ignore "<regexp>"`. For example, if you want to ignore Golang files containing `_generated.go`: `-ignore "^.*_generated.go$"`.
 
