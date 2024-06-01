@@ -19,7 +19,7 @@ In other words, it will help you filter long **and complex** functions from thos
 
 ## Installation
 
-     go get -u github.com/tkrajina/golongfuncs/...
+    go install  github.com/tkrajina/golongfuncs/...
 
 ## Measures
 
