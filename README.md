@@ -1,4 +1,5 @@
-[![Build Status](https://travis-ci.org/tkrajina/golongfuncs.svg?branch=master)](https://travis-ci.org/tkrajina/golongfuncs)
+![Go Tests](https://github.com/tkrajina/golongfuncs/actions/workflows/go.yml/badge.svg)
+
 
 # GoLongFuncs
 
