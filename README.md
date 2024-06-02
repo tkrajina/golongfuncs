@@ -1,4 +1,5 @@
-![Go Tests](https://github.com/tkrajina/golongfuncs/actions/workflows/go.yml/badge.svg)
+![Go Tests](https://github.com/gogingersnap777/golongfuncs/actions/workflows/go.yml/badge.svg)
+
 
 # GoLongFuncs
 
